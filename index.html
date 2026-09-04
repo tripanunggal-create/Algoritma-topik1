@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSD231 - Algoritma dan Pemrograman | Universitas Esa Unggul</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ueu: {
+                            blue: '#0F4C81',
+                            lightBlue: '#0052CC',
+                            orange: '#F26522',
+                            dark: '#0B192C',
+                            accent: '#FF6B00'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Custom scrollbar and sleek visual details */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .pulse-subtle {
+            animation: pulseSubtle 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(1.01); }
+        }
+
+        .gradient-border {
+            position: relative;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #0F4C81, #F26522);
+            padding: 2px;
+        }
+
+        .gradient-border-inner {
+            background: white;
+            border-radius: calc(1rem - 2px);
+        }
+
+        /* Drag & Click Order animations */
+        .seq-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .seq-item:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-ueu-orange selection:text-white">
+
+    <!-- Top Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-ueu-blue to-ueu-lightBlue flex items-center justify-center text-white font-black text-lg shadow-md shadow-blue-500/20">
+                    UEU
+                </div>
+                <div>
+                    <h1 class="text-xs font-semibold text-ueu-orange uppercase tracking-wider">Universitas Esa Unggul</h1>
+                    <p class="text-sm font-bold text-slate-900 leading-none">CSD231 • Algoritma dan Pemrograman</p>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="hidden md:flex items-center space-x-4">
+                <div class="text-right">
+                    <span class="text-xs font-medium text-slate-500">Progress Modul Orientasi</span>
+                    <p class="text-xs font-bold text-ueu-blue" id="progressText">Langkah 1 dari 8 (12%)</p>
+                </div>
+                <div class="w-32 bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                    <div id="progressBar" class="bg-gradient-to-r from-ueu-blue to-ueu-orange h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 12.5%"></div>
+                </div>
+            </div>
+
+            <!-- Audio & SFX Controls -->
+            <div class="flex items-center space-x-2">
+                <button id="soundToggle" onclick="toggleAudio()" class="p-2 rounded-lg text-slate-500 hover:text-ueu-blue hover:bg-slate-100 transition" title="Efek Suara Klik (SFX)">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+                <span class="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full font-mono font-medium border border-slate-200 hidden sm:inline-block">Est. 5-8 Menit</span>
+            </div>
+        </div>
+
+        <!-- Mobile Progress Bar -->
+        <div class="w-full bg-slate-100 h-1 md:hidden">
+            <div id="progressBarMobile" class="bg-gradient-to-r from-ueu-blue to-ueu-orange h-1 transition-all duration-300" style="width: 12.5%"></div>
+        </div>
+    </header>
+
+    <!-- Main Interactive Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:py-8 flex flex-col justify-center">
+
+        <!-- SCREEN 1: OPENING QUESTION -->
+        <section id="screen-1" class="screen-content transition-all duration-500">
+            <div class="max-w-3xl mx-auto text-center space-y-8">
+                <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 text-ueu-blue border border-blue-200/60 text-xs font-semibold uppercase tracking-wider">
+                    <i class="fa-solid fa-compass text-ueu-orange"></i>
+                    <span>Modul Orientasi Pengenalan Berpikir Komputasional</span>
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+                    Kalau kamu ingin menjadi programmer...<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-ueu-blue to-ueu-orange">apakah kamu cukup hanya bisa coding?</span>
+                </h2>
+
+                <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                    Pilih jawabanmu berdasarkan persepsimu saat ini sebelum memulai perjalanan di Teknik Informatika.
+                </p>
+
+                <!-- Binary Choice Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto pt-2">
+                    <button onclick="handleScreen1Choice(true)" id="s1-btn-ya" class="group flex-1 py-4 px-6 rounded-xl border-2 border-slate-200 hover:border-ueu-blue bg-white hover:bg-blue-50/50 text-slate-800 font-bold text-lg shadow-sm hover:shadow transition-all duration-200 flex items-center justify-center space-x-3">
+                        <span class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center text-sm font-black transition">A</span>
+                        <span>YA</span>
+                    </button>
+                    <button onclick="handleScreen1Choice(false)" id="s1-btn-tidak" class="group flex-1 py-4 px-6 rounded-xl border-2 border-slate-200 hover:border-ueu-orange bg-white hover:bg-orange-50/50 text-slate-800 font-bold text-lg shadow-sm hover:shadow transition-all duration-200 flex items-center justify-center space-x-3">
+                        <span class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-orange-600 group-hover:text-white flex items-center justify-center text-sm font-black transition">B</span>
+                        <span>TIDAK</span>
+                    </button>
+                </div>
+
+                <!-- Formative Feedback Container -->
+                <div id="s1-feedback" class="hidden opacity-0 transform translate-y-4 transition-all duration-500 max-w-xl mx-auto">
+                    <div id="s1-feedback-card" class="p-5 rounded-2xl border text-left flex items-start space-x-4 shadow-sm">
+                        <div id="s1-feedback-icon" class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-lg font-bold"></div>
+                        <div class="space-y-1">
+                            <h4 id="s1-feedback-title" class="font-bold text-slate-900 text-base"></h4>
+                            <p id="s1-feedback-body" class="text-sm text-slate-600 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- Flow Animation Preview Card -->
+                    <div class="mt-6 p-6 bg-slate-900 text-white rounded-2xl shadow-xl space-y-4">
+                        <p class="text-xs uppercase font-mono tracking-widest text-ueu-orange font-bold text-center">Di sinilah Algoritma dan Pemrograman dimulai</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                            <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center space-y-1">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xl"></i>
+                                <div class="text-xs font-bold text-slate-200">1. Problem</div>
+                                <div class="text-[10px] text-slate-400">Masalah nyata</div>
+                            </div>
+                            <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center space-y-1">
+                                <i class="fa-solid fa-brain text-blue-400 text-xl"></i>
+                                <div class="text-xs font-bold text-slate-200">2. Thinking</div>
+                                <div class="text-[10px] text-slate-400">Logika berpikir</div>
+                            </div>
+                            <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center space-y-1">
+                                <i class="fa-solid fa-diagram-project text-emerald-400 text-xl"></i>
+                                <div class="text-xs font-bold text-slate-200">3. Algorithm</div>
+                                <div class="text-[10px] text-slate-400">Rancangan langkah</div>
+                            </div>
+                            <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center space-y-1">
+                                <i class="fa-solid fa-code text-ueu-orange text-xl"></i>
+                                <div class="text-xs font-bold text-slate-200">4. Code</div>
+                                <div class="text-[10px] text-slate-400">Bahasa komputer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: KOMPUTER TIDAK BISA MENEBAK -->
+        <section id="screen-2" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-orange uppercase tracking-wider bg-orange-50 px-3 py-1 rounded-full border border-orange-200">Konsep #1 • Sifat Dasar Komputer</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Komputer Tidak Bisa Menebak Maksudmu</h2>
+                    <p class="text-sm text-slate-600">Simulasi percakapan langsung antara Manusia dan Komputer:</p>
+                </div>
+
+                <!-- Chat Simulation Window -->
+                <div class="bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-800">
+                    <div class="bg-slate-800/90 px-4 py-3 flex items-center justify-between border-b border-slate-700/60">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-mono text-slate-400 ml-2">dialogue_simulation.log</span>
+                        </div>
+                        <span class="text-[11px] font-mono text-slate-400"><i class="fa-solid fa-terminal mr-1"></i> CPU Core: Active</span>
+                    </div>
+
+                    <div class="p-4 sm:p-6 space-y-4 font-sans text-sm">
+                        <!-- Dialogue 1: Manusia -->
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="bg-blue-900/40 border border-blue-500/30 text-blue-100 p-3 rounded-2xl rounded-tl-none max-w-md">
+                                <span class="text-[10px] text-blue-300 font-mono block mb-1">MANUSIA</span>
+                                "Saya ingin komputer mencari angka terbesar dari daftar angka ini."
+                            </div>
+                        </div>
+
+                        <!-- Dialogue 2: Komputer -->
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-slate-800 border border-slate-700 text-slate-200 p-3 rounded-2xl rounded-tr-none max-w-md">
+                                <span class="text-[10px] text-emerald-400 font-mono block mb-1">KOMPUTER (CPU)</span>
+                                "Baik. Bagaimana caranya secara persis?"
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-emerald-400 text-xs font-bold flex-shrink-0 border border-emerald-500/40">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                        </div>
+
+                        <!-- Dialogue 3: Manusia -->
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="bg-blue-900/40 border border-blue-500/30 text-blue-100 p-3 rounded-2xl rounded-tl-none max-w-md">
+                                <span class="text-[10px] text-blue-300 font-mono block mb-1">MANUSIA</span>
+                                "Ya... lihat saja semua angkanya, lalu cari yang paling besar!"
+                            </div>
+                        </div>
+
+                        <!-- Dialogue 4: Komputer -->
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-slate-800 border border-slate-700 text-slate-200 p-3 rounded-2xl rounded-tr-none max-w-md">
+                                <span class="text-[10px] text-rose-400 font-mono block mb-1">KOMPUTER (CPU)</span>
+                                "Saya tidak punya intuisi mata manusia. Urutan langkah eksplisitnya bagaimana?"
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-rose-400 text-xs font-bold flex-shrink-0 border border-rose-500/40">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Question Screen 2 -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question text-ueu-orange"></i>
+                        <span>Menurutmu, apa yang harus dilakukan terlebih dahulu agar komputer paham?</span>
+                    </h3>
+
+                    <div class="space-y-2">
+                        <button onclick="checkScreen2Answer(1)" class="s2-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:bg-slate-50 transition flex items-center justify-between group">
+                            <span class="text-sm font-medium text-slate-700">A. Menyuruh komputer berpikir sendiri menggunakan AI mutakhir.</span>
+                            <i class="fa-regular fa-circle text-slate-300 group-hover:text-ueu-blue"></i>
+                        </button>
+                        <button onclick="checkScreen2Answer(2)" class="s2-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:bg-slate-50 transition flex items-center justify-between group">
+                            <span class="text-sm font-medium text-slate-700">B. Menentukan pembanding sementara, lalu mengecek angka satu per satu secara sistematis.</span>
+                            <i class="fa-regular fa-circle text-slate-300 group-hover:text-ueu-blue"></i>
+                        </button>
+                        <button onclick="checkScreen2Answer(3)" class="s2-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:bg-slate-50 transition flex items-center justify-between group">
+                            <span class="text-sm font-medium text-slate-700">C. Langsung mengetik sintaks C++ tanpa membuat logika terlebih dahulu.</span>
+                            <i class="fa-regular fa-circle text-slate-300 group-hover:text-ueu-blue"></i>
+                        </button>
+                    </div>
+
+                    <div id="s2-feedback" class="hidden p-4 rounded-xl border transition-all text-sm"></div>
+                </div>
+
+                <!-- Core Takeaway Banner -->
+                <div class="p-4 rounded-xl bg-gradient-to-r from-ueu-blue to-blue-900 text-white flex items-center justify-between shadow-md">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-lightbulb text-amber-300 text-xl"></i>
+                        <div class="text-xs sm:text-sm">
+                            <span class="font-bold text-amber-200 block">PESAN UTAMA:</span>
+                            Komputer hanya mengeksekusi instruksi. Manusia yang bertanggung jawab merancang logikanya.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: ALGORITMA ADA DI SEKITAR KITA -->
+        <section id="screen-3" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-blue uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Konsep #2 • Penerapan Praktis</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Algoritma Ada di Sekitar Kita</h2>
+                    <p class="text-sm text-slate-600">
+                        Susun langkah acak di bawah ini menjadi urutan terstruktur untuk <strong>Membuat Mie Instan</strong>:
+                    </p>
+                </div>
+
+                <!-- Interactive Sequencing Area -->
+                <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Urutan Langkah (Klik angka / gunakan panah):</span>
+                        <button onclick="resetNoodleSequence()" class="text-xs text-ueu-blue font-semibold hover:underline">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Urutan
+                        </button>
+                    </div>
+
+                    <!-- Steps List Container -->
+                    <div id="noodleStepsContainer" class="space-y-2.5">
+                        <!-- Populated dynamically via JavaScript -->
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <span class="text-xs text-slate-500 italic"><i class="fa-solid fa-info-circle mr-1"></i> Klik tombol naik/turun untuk menyusun urutan logis.</span>
+                        <button onclick="validateNoodleSequence()" class="w-full sm:w-auto px-6 py-2.5 bg-ueu-blue hover:bg-blue-800 text-white text-sm font-bold rounded-xl shadow-md transition">
+                            Uji Algoritma Saya
+                        </button>
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="s3-feedback" class="hidden p-4 rounded-xl text-sm transition-all"></div>
+                </div>
+
+                <!-- Definition Popup Card -->
+                <div id="s3-definition-card" class="hidden p-5 bg-gradient-to-br from-slate-900 to-ueu-dark text-white rounded-2xl border border-slate-800 shadow-xl space-y-2 animate-fade-in">
+                    <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+                        <i class="fa-solid fa-circle-check text-lg"></i>
+                        <span>Hebat! Tanpa sadar, kamu baru saja merancang sebuah Algoritma.</span>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed pt-1">
+                        <strong class="text-white">Definisi Algoritma:</strong> Serangkaian langkah-langkah yang terbatas, terstruktur, dan jelas (unambiguous) untuk menyelesaikan suatu masalah atau mencapai tujuan tertentu.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: DARI MASALAH MENJADI PROGRAM -->
+        <section id="screen-4" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-orange uppercase tracking-wider bg-orange-50 px-3 py-1 rounded-full border border-orange-200">Konsep #3 • Pipeline Komputasi</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Dari Masalah Menjadi Program</h2>
+                    <p class="text-sm text-slate-600">Klik setiap tahapan di bawah ini untuk memahami alur berpikir seorang Ilmuwan Komputer:</p>
+                </div>
+
+                <!-- Interactive Process Flowchart Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+                    <!-- Node 1 -->
+                    <button onclick="revealPipelineStep('masalah')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xs">01</div>
+                        <div class="font-bold text-xs text-slate-800">MASALAH</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 2 -->
+                    <button onclick="revealPipelineStep('logika')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">02</div>
+                        <div class="font-bold text-xs text-slate-800">LOGIKA</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 3 -->
+                    <button onclick="revealPipelineStep('algoritma')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">03</div>
+                        <div class="font-bold text-xs text-slate-800">ALGORITMA</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 4 -->
+                    <button onclick="revealPipelineStep('flowchart')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">04</div>
+                        <div class="font-bold text-[11px] text-slate-800 leading-tight">FLOWCHART / PSEUDOCODE</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 5 -->
+                    <button onclick="revealPipelineStep('program')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">05</div>
+                        <div class="font-bold text-xs text-slate-800">PROGRAM</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 6 -->
+                    <button onclick="revealPipelineStep('test')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-xs">06</div>
+                        <div class="font-bold text-xs text-slate-800">TEST</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <!-- Node 7 -->
+                    <button onclick="revealPipelineStep('improve')" class="pipeline-node p-3 rounded-xl border border-slate-200 bg-white hover:border-ueu-blue text-center space-y-1.5 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ueu-blue">
+                        <div class="w-8 h-8 mx-auto rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">07</div>
+                        <div class="font-bold text-xs text-slate-800">IMPROVE</div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                </div>
+
+                <!-- Pipeline Explanation Output Display Card -->
+                <div id="pipeline-detail-card" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md min-h-[140px] flex items-center justify-center text-center">
+                    <p class="text-slate-400 text-sm italic">
+                        <i class="fa-solid fa-hand-pointer mr-2"></i> Klik salah satu tahapan di atas untuk menampilkan penjelasannya.
+                    </p>
+                </div>
+
+                <!-- Banner Callout -->
+                <div class="bg-slate-900 p-4 rounded-xl text-white text-center text-sm font-medium shadow-md">
+                    <span class="text-ueu-orange font-bold">Kesimpulan Kunci:</span> Coding bukan titik awal. Coding adalah bagian pertengahan dari perjalanan menuju penyelesaian masalah.
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: SCENARIO: KAMU ADALAH PROGRAMMER -->
+        <section id="screen-5" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-blue uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Studi Kasus • Simulasi Peran</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Skenario: Kamu Adalah Programmer</h2>
+                </div>
+
+                <!-- Scenario Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="p-4 bg-slate-50 border-l-4 border-ueu-blue rounded-r-xl space-y-1">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Skenario Klien:</span>
+                        <p class="text-base font-semibold text-slate-800">
+                            "Kamu diminta membuat program sistem verifikasi otomatis untuk menentukan apakah seorang pendaftar beasiswa memenuhi syarat berdasarkan nilai IPK dan pendapatan orang tua."
+                        </p>
+                    </div>
+
+                    <p class="font-bold text-slate-900 text-sm">Menurutmu, sebagai programmer profesional, apa langkah pertama yang harus kamu lakukan?</p>
+
+                    <!-- Multiple Choice Questions -->
+                    <div class="space-y-2.5">
+                        <button onclick="handleScenarioChoice('A')" id="s5-opt-A" class="s5-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:border-ueu-blue hover:bg-slate-50 transition text-sm font-medium text-slate-700 flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">A</span>
+                            <span>Langsung membuka IDE dan menulis kode C++ secepat mungkin.</span>
+                        </button>
+                        <button onclick="handleScenarioChoice('B')" id="s5-opt-B" class="s5-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:border-ueu-blue hover:bg-slate-50 transition text-sm font-medium text-slate-700 flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">B</span>
+                            <span>Mencari potongan kode acak di internet lalu menyalinnya tanpa dibaca.</span>
+                        </button>
+                        <button onclick="handleScenarioChoice('C')" id="s5-opt-C" class="s5-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:border-ueu-blue hover:bg-slate-50 transition text-sm font-medium text-slate-700 flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">C</span>
+                            <span>Memahami syarat aturan beasiswa secara terperinci dan merancang logika syaratnya.</span>
+                        </button>
+                        <button onclick="handleScenarioChoice('D')" id="s5-opt-D" class="s5-opt w-full p-3.5 rounded-xl border border-slate-200 text-left hover:border-ueu-blue hover:bg-slate-50 transition text-sm font-medium text-slate-700 flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">D</span>
+                            <span>Merancang tampilan antarmuka (UI) terlebih dahulu tanpa peduli logika belakangnya.</span>
+                        </button>
+                    </div>
+
+                    <!-- Feedback Container -->
+                    <div id="s5-feedback" class="hidden p-4 rounded-xl text-sm transition-all"></div>
+                </div>
+
+                <!-- Workflow Cycle Graphic -->
+                <div id="s5-cycle" class="hidden bg-slate-900 p-5 rounded-2xl text-white space-y-3 animate-fade-in">
+                    <p class="text-xs uppercase font-mono tracking-widest text-ueu-orange font-bold text-center">Siklus Pengembangan Software Profesional</p>
+                    <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-bold font-mono">
+                        <span class="px-3 py-1.5 bg-slate-800 text-blue-300 rounded-lg border border-slate-700">UNDERSTAND</span>
+                        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
+                        <span class="px-3 py-1.5 bg-slate-800 text-indigo-300 rounded-lg border border-slate-700">DESIGN</span>
+                        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
+                        <span class="px-3 py-1.5 bg-slate-800 text-amber-300 rounded-lg border border-slate-700">CODE</span>
+                        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
+                        <span class="px-3 py-1.5 bg-slate-800 text-teal-300 rounded-lg border border-slate-700">TEST</span>
+                        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
+                        <span class="px-3 py-1.5 bg-slate-800 text-emerald-300 rounded-lg border border-slate-700">IMPROVE</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 6: LALU APA YANG AKAN KAMU PELAJARI? -->
+        <section id="screen-6" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-orange uppercase tracking-wider bg-orange-50 px-3 py-1 rounded-full border border-orange-200">Peta Perkuliahan • CSD231</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Perjalanan Belajar Selama Satu Semester</h2>
+                    <p class="text-sm text-slate-600">Klik setiap modul untuk melihat fokus materi, alasan pentingnya, dan kemampuan yang akan kamu miliki:</p>
+                </div>
+
+                <!-- Syllabus Roadmap Accordion Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="syllabusRoadmap">
+                    <!-- Module 01 -->
+                    <div onclick="toggleModuleDetails(1)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-blue-100 text-ueu-blue rounded-md">01 — THINK</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-1"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Pendahuluan Algoritma & Pemrograman</h4>
+                        <div id="module-body-1" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Konsep dasar komputasi, cara berpikir algoritmik, dan struktur dasar komputer.</p>
+                            <p><strong>Mengapa penting:</strong> Membangun pondasi berpikir sebelum menyentuh kode.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: Computational Thinking</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 02 -->
+                    <div onclick="toggleModuleDetails(2)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md">02 — DRAW</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-2"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Flowchart & Pseudocode</h4>
+                        <div id="module-body-2" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Notasi diagram alir simbolis dan penulisan terstruktur independen dari bahasa C++.</p>
+                            <p><strong>Mengapa penting:</strong> Komunikasi logika antar tim teknis.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: Logic Visual Mapping</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 03 -->
+                    <div onclick="toggleModuleDetails(3)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-purple-100 text-purple-700 rounded-md">03 — BUILD</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-3"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Struktur Dasar Pemrograman C++</h4>
+                        <div id="module-body-3" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Tipe data, variabel, kontrol percabangan (if-else, switch) & perulangan (for, while).</p>
+                            <p><strong>Mengapa penting:</strong> Komponen dasar untuk membangun instruksi program.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: C++ Syntax & Control Flow</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 04 -->
+                    <div onclick="toggleModuleDetails(4)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-amber-100 text-amber-700 rounded-md">04 — GO DEEPER</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-4"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Pointer, Array & Rekursi</h4>
+                        <div id="module-body-4" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Manajemen memori langsung, pengelompokan data, dan fungsi pemanggilan diri.</p>
+                            <p><strong>Mengapa penting:</strong> Optimasi efisiensi memori dan penyelesaian masalah kompleks.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: Memory Management</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 05 -->
+                    <div onclick="toggleModuleDetails(5)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-rose-100 text-rose-700 rounded-md">05 — SORT</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Algoritma Pengurutan (Sorting)</h4>
+                        <div id="module-body-5" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Bubble Sort, Selection Sort, Insertion Sort, Quick Sort.</p>
+                            <p><strong>Mengapa penting:</strong> Mengatur ribuan hingga jutaan data dengan kecepatan optimal.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: Data Sorting Optimization</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 06 -->
+                    <div onclick="toggleModuleDetails(6)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-teal-100 text-teal-700 rounded-md">06 — SEARCH</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-6"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Pencarian (Linear, Binary & BFS)</h4>
+                        <div id="module-body-6" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Teknik pencarian cepat data tunggal dan penelusuran graf/pohon sederhana.</p>
+                            <p><strong>Mengapa penting:</strong> Menemukan data tepat waktu dari basis data raksasa.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: Search Efficiency</span>
+                        </div>
+                    </div>
+
+                    <!-- Module 07 -->
+                    <div onclick="toggleModuleDetails(7)" class="module-card bg-white p-4 rounded-xl border border-slate-200 hover:border-ueu-blue shadow-sm cursor-pointer transition space-y-2 md:col-span-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black font-mono px-2 py-1 bg-ueu-orange/10 text-ueu-orange rounded-md">07 — SOLVE</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs module-icon-7"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Studi Kasus & Proyek Akhir</h4>
+                        <div id="module-body-7" class="hidden text-xs text-slate-600 pt-2 border-t border-slate-100 space-y-1.5">
+                            <p><strong>Apa yang dipelajari:</strong> Mengintegrasikan seluruh topik ke dalam satu aplikasi nyata.</p>
+                            <p><strong>Mengapa penting:</strong> Menguji portofolio riil sebelum melangkah ke matakuliah Pemrograman Berorientasi Objek & Struktur Data.</p>
+                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-semibold text-[11px]">Skill: End-to-End Problem Solving</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 7: WHAT WILL YOU BECOME? -->
+        <section id="screen-7" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-bold text-ueu-blue uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Capaian Pembelajaran • CPL & CPMK</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Apa yang Akan Berubah dari Cara Berpikirmu?</h2>
+                    <p class="text-sm text-slate-600">5 Transformasi Kemampuan Utama Lulusan Mata Kuliah CSD231:</p>
+                </div>
+
+                <!-- 5 Core Competencies Cards Grid -->
+                <div class="space-y-3">
+                    <!-- 1. THINK -->
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+                            01
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">THINK — Berpikir Logis dan Sistematis</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Mengembangkan pemikiran logis, kritis, sistematis, dan inovatif dalam konteks pengembangan atau implementasi ilmu pengetahuan dan teknologi.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 2. ANALYZE -->
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+                            02
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">ANALYZE — Menganalisis Masalah Sebelum Bertindak</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Kemampuan mengidentifikasi, memformulasikan, dan membedah akar permasalahan secara terukur menggunakan teknik komputasi modern.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 3. DESIGN -->
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+                            03
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">DESIGN — Merancang Algoritma Efisien</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Kemampuan merancang alur logika dan algoritma terstruktur yang siap diimplementasikan secara efisien ke dalam sistem lunak.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 4. CODE -->
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-600 text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+                            04
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">CODE — Menerjemahkan Solusi Menjadi Program</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Menguasai sintaks bahasa pemrograman C++ untuk mengubah rancangan abstrak menjadi aplikasi yang presisi dan bebas galat (error).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 5. SOLVE -->
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-ueu-orange text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+                            05
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">SOLVE — Pemecahan Masalah Nyata</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Menggunakan daya guna pemrograman untuk menyelesaikan masalah praktis di masyarakat, industri, dan sains komputasi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 8: FINAL REFLECTION & COMMITMENT -->
+        <section id="screen-8" class="screen-content hidden transition-all duration-500">
+            <div class="max-w-2xl mx-auto space-y-6 text-center">
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-ueu-orange uppercase tracking-wider bg-orange-50 px-3 py-1 rounded-full border border-orange-200">Refleksi Akhir • Reframing Mindset</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                        Sekarang, menurut pandanganmu...<br>
+                        <span class="text-ueu-blue">mengapa kamu wajib belajar Algoritma & Pemrograman?</span>
+                    </h2>
+                </div>
+
+                <!-- Reflection Input Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-left space-y-4">
+                    <label for="studentReflection" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Tuliskan pemahamanmu dalam 1-2 kalimat ringkas:
+                    </label>
+                    <textarea id="studentReflection" rows="3" class="w-full p-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ueu-blue focus:border-ueu-blue text-sm text-slate-800 placeholder-slate-400 transition" placeholder="Contoh: Karena algoritma melatih logika berpikir saya untuk memecahkan masalah sebelum menulis kode program..."></textarea>
+                    
+                    <button onclick="submitReflection()" id="btnSubmitReflection" class="w-full py-3 bg-gradient-to-r from-ueu-blue to-ueu-lightBlue hover:from-blue-800 hover:to-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Simpan Refleksi Berpikir Saya</span>
+                    </button>
+                </div>
+
+                <!-- Manifest Output Display -->
+                <div id="reflection-output" class="hidden space-y-6 opacity-0 transition-all duration-500">
+                    <div class="p-6 bg-slate-900 rounded-2xl text-white space-y-4 shadow-xl border border-slate-800 text-left">
+                        <div class="flex items-center space-x-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-quote-left"></i>
+                            <span>Refleksi Berpikir Mahasiswa Informatika UEU</span>
+                        </div>
+                        <p id="reflectionTextDisplay" class="text-slate-200 italic font-serif text-base border-l-2 border-ueu-orange pl-4 py-1"></p>
+                        
+                        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                            <span>Status: Mindset Tersetting</span>
+                            <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Siap Memulai Semester</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="text-lg font-extrabold text-slate-800">
+                            "Programmer bukan sekadar pengetik kode."<br>
+                            <span class="text-ueu-orange">Programmer adalah Problem Solver.</span>
+                        </div>
+
+                        <!-- Mini Process Summary -->
+                        <div class="flex items-center justify-center space-x-2 text-xs font-bold text-slate-600 font-mono flex-wrap">
+                            <span>MASALAH</span>
+                            <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            <span>BERPIKIR</span>
+                            <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            <span>ALGORITMA</span>
+                            <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            <span>PROGRAM</span>
+                            <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            <span class="text-emerald-600">SOLUSI</span>
+                        </div>
+
+                        <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed pt-2">
+                            Semester ini, kamu tidak hanya belajar bagaimana membuat program.<br>
+                            <strong>Kamu akan belajar bagaimana berpikir untuk membuat solusi.</strong>
+                        </p>
+                    </div>
+
+                    <!-- Final CTA Button -->
+                    <div class="pt-4">
+                        <button onclick="launchJourney()" class="px-8 py-4 bg-gradient-to-r from-ueu-orange to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-lg rounded-2xl shadow-lg shadow-orange-500/30 transform hover:-translate-y-0.5 transition flex items-center space-x-3 mx-auto">
+                            <span>MULAI PERJALANAN BELAJAR</span>
+                            <i class="fa-solid fa-rocket"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Footer Navigation Controls -->
+    <footer class="bg-white border-t border-slate-200 py-3 px-4 sm:px-6 sticky bottom-0 z-20">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <button id="btnPrev" onclick="changeScreen(-1)" class="px-4 py-2 rounded-xl text-slate-600 font-medium text-sm hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                <span>Sebelumnya</span>
+            </button>
+
+            <div class="text-xs font-bold text-slate-500">
+                <span id="currentScreenNum">1</span> / 8
+            </div>
+
+            <button id="btnNext" onclick="changeScreen(1)" class="px-5 py-2.5 bg-ueu-blue hover:bg-blue-800 text-white font-bold text-sm rounded-xl shadow transition flex items-center space-x-2">
+                <span>Lanjut</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Global Application State
+        let currentScreen = 1;
+        const totalScreens = 8;
+        let soundEnabled = true;
+
+        // Audio Context for subtle micro-interactions & SFX
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'error') {
+                    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                }
+            } catch (e) {
+                // Audio fallback silence
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.querySelector('#soundToggle i');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-sm';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-sm text-slate-400';
+            }
+        }
+
+        // Navigation Controller
+        function changeScreen(delta) {
+            const nextScreen = currentScreen + delta;
+            if (nextScreen >= 1 && nextScreen <= totalScreens) {
+                // Hide current screen
+                document.getElementById(`screen-${currentScreen}`).classList.add('hidden');
+                
+                currentScreen = nextScreen;
+                
+                // Show new screen
+                const newScreenEl = document.getElementById(`screen-${currentScreen}`);
+                newScreenEl.classList.remove('hidden');
+
+                playSound('click');
+                updateProgressUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateProgressUI() {
+            const percent = Math.round((currentScreen / totalScreens) * 100);
+            document.getElementById('progressText').innerText = `Langkah ${currentScreen} dari ${totalScreens} (${percent}%)`;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressBarMobile').style.width = `${percent}%`;
+            document.getElementById('currentScreenNum').innerText = currentScreen;
+
+            // Nav Buttons State
+            document.getElementById('btnPrev').disabled = (currentScreen === 1);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (currentScreen === totalScreens) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'flex';
+            }
+        }
+
+        function handleScreen1Choice(isYes) {
+            playSound('click');
+            const feedbackBox = document.getElementById('s1-feedback');
+            const card = document.getElementById('s1-feedback-card');
+            const icon = document.getElementById('s1-feedback-icon');
+            const title = document.getElementById('s1-feedback-title');
+            const body = document.getElementById('s1-feedback-body');
+
+            feedbackBox.classList.remove('hidden');
+            setTimeout(() => {
+                feedbackBox.classList.remove('opacity-0', 'translate-y-4');
+            }, 50);
+
+            if (isYes) {
+                card.className = "p-5 rounded-2xl border border-amber-200 bg-amber-50/70 text-left flex items-start space-x-4 shadow-sm";
+                icon.className = "w-10 h-10 rounded-xl bg-amber-500 flex-shrink-0 flex items-center justify-center text-white text-lg font-bold";
+                icon.innerHTML = '<i class="fa-solid fa-lightbulb"></i>';
+                title.innerText = "Belum tentu.";
+                body.innerText = "Menulis kode (coding) hanyalah salah satu bagian akhir dari proses pemrograman. Tanpa rancangan logika yang matang, kodedipastikan akan penuh bug dan membingungkan.";
+            } else {
+                card.className = "p-5 rounded-2xl border border-emerald-200 bg-emerald-50/70 text-left flex items-start space-x-4 shadow-sm";
+                icon.className = "w-10 h-10 rounded-xl bg-emerald-600 flex-shrink-0 flex items-center justify-center text-white text-lg font-bold";
+                icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                title.innerText = "Tepat sekali!";
+                body.innerText = "Sebelum menyentuh keyboard untuk menulis baris kode, kamu perlu memahami esensi masalah dan merancang langkah-langkah solusinya secara terstruktur.";
+            }
+        }
+
+        function checkScreen2Answer(option) {
+            const fb = document.getElementById('s2-feedback');
+            fb.classList.remove('hidden');
+
+            if (option === 2) {
+                playSound('success');
+                fb.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm";
+                fb.innerHTML = "<strong>Benar!</strong> Komputer butuh instruksi eksplisit: tentukan nilai awal, bandingkan satu per satu, lalu perbarui jika menemukan nilai yang lebih besar.";
+            } else {
+                playSound('error');
+                fb.className = "p-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-sm";
+                fb.innerHTML = "<strong>Belum tepat.</strong> Komputer tidak memiliki intuisi atau pikiran sendiri. Komputer mengeksekusi instruksi langkah demi langkah dari manusia.";
+            }
+        }
+
+        const initialNoodleSteps = [
+            { id: 1, text: "Masukkan mie instan ke dalam air mendidih", correctPos: 2 },
+            { id: 2, text: "Rebus air di dalam panci hingga mendidih", correctPos: 1 },
+            { id: 3, text: "Campurkan bumbu ke piring saji", correctPos: 3 },
+            { id: 4, text: "Sajikan mie instan hangat siap disantap", correctPos: 5 },
+            { id: 5, text: "Tunggu 3 menit hingga mie matang sempurna", correctPos: 4 }
+        ];
+
+        let currentNoodleSteps = [...initialNoodleSteps];
+
+        function renderNoodleSteps() {
+            const container = document.getElementById('noodleStepsContainer');
+            container.innerHTML = '';
+
+            currentNoodleSteps.forEach((step, idx) => {
+                const el = document.createElement('div');
+                el.className = "seq-item p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-sm shadow-sm";
+                el.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-mono font-bold text-xs flex items-center justify-center">${idx + 1}</span>
+                        <span class="font-medium text-slate-800">${step.text}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="moveNoodleStep(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1.5 text-slate-400 hover:text-ueu-blue disabled:opacity-30">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                        <button onclick="moveNoodleStep(${idx}, 1)" ${idx === currentNoodleSteps.length - 1 ? 'disabled' : ''} class="p-1.5 text-slate-400 hover:text-ueu-blue disabled:opacity-30">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function moveNoodleStep(index, direction) {
+            playSound('click');
+            const targetIndex = index + direction;
+            if (targetIndex >= 0 && targetIndex < currentNoodleSteps.length) {
+                const temp = currentNoodleSteps[index];
+                currentNoodleSteps[index] = currentNoodleSteps[targetIndex];
+                currentNoodleSteps[targetIndex] = temp;
+                renderNoodleSteps();
+            }
+        }
+
+        function resetNoodleSequence() {
+            playSound('click');
+            currentNoodleSteps = [...initialNoodleSteps];
+            document.getElementById('s3-feedback').classList.add('hidden');
+            document.getElementById('s3-definition-card').classList.add('hidden');
+            renderNoodleSteps();
+        }
+
+        function validateNoodleSequence() {
+            let isCorrect = true;
+            currentNoodleSteps.forEach((step, idx) => {
+                if (step.correctPos !== idx + 1) {
+                    isCorrect = false;
+                }
+            });
+
+            const fb = document.getElementById('s3-feedback');
+            const defCard = document.getElementById('s3-definition-card');
+            fb.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSound('success');
+                fb.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm font-semibold";
+                fb.innerHTML = "<i class='fa-solid fa-circle-check text-emerald-600 mr-2'></i>Urutan Logis & Sempurna! Langkah-langkah telah tersusun terstruktur.";
+                defCard.classList.remove('hidden');
+            } else {
+                playSound('error');
+                fb.className = "p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-sm";
+                fb.innerHTML = "<i class='fa-solid fa-triangle-exclamation text-amber-600 mr-2'></i>Langkah belum tepat logis. Coba bayangkan: Apakah air harus dididihkan terlebih dahulu sebelum memasukkan mie?";
+            }
+        }
+
+        const pipelineData = {
+            masalah: {
+                title: "01. MASALAH (Problem)",
+                desc: "Memahami apa yang sebenarnya ingin diselesaikan dan membedah kebutuhan riil pengguna."
+            },
+            logika: {
+                title: "02. LOGIKA (Logic)",
+                desc: "Menentukan bagaimana pemecahan masalah bekerja secara teoritis dan matematis."
+            },
+            algoritma: {
+                title: "03. ALGORITMA (Algorithm)",
+                desc: "Menyusun langkah-langkah penyelesaian rinci secara berurutan dan terbatas."
+            },
+            flowchart: {
+                title: "04. FLOWCHART / PSEUDOCODE",
+                desc: "Menggambar visual alur diagram atau menulis teks standar sebelum menulis kode aktual."
+            },
+            program: {
+                title: "05. PROGRAM (Coding)",
+                desc: "Menerjemahkan algoritma ke dalam bahasa pemrograman C++ agar dipahami mesin."
+            },
+            test: {
+                title: "06. TEST (Testing)",
+                desc: "Uji coba program dengan berbagai input sampel untuk memastikan tidak ada kesalahan/bug."
+            },
+            improve: {
+                title: "07. IMPROVE (Optimization)",
+                desc: "Memperbaiki performa kecepatan dan efisiensi memori program agar lebih optimal."
+            }
+        };
+
+        function revealPipelineStep(key) {
+            playSound('click');
+            const display = document.getElementById('pipeline-detail-card');
+            const item = pipelineData[key];
+            
+            display.innerHTML = `
+                <div class="space-y-2 animate-fade-in text-center max-w-lg">
+                    <span class="text-xs font-bold font-mono px-3 py-1 bg-blue-100 text-ueu-blue rounded-full">${item.title}</span>
+                    <p class="text-base font-bold text-slate-800">${item.desc}</p>
+                </div>
+            `;
+        }
+
+        function handleScenarioChoice(choice) {
+            const fb = document.getElementById('s5-feedback');
+            const cycle = document.getElementById('s5-cycle');
+            fb.classList.remove('hidden');
+
+            if (choice === 'C') {
+                playSound('success');
+                fb.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-sm";
+                fb.innerHTML = "<strong>Sangat Tepat!</strong> Programmer profesional tidak memulai dari penulisan kode. Programmer memulai dari pemahaman mendalam tentang masalah dan aturan logikanya.";
+                cycle.classList.remove('hidden');
+            } else {
+                playSound('error');
+                fb.className = "p-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-sm";
+                fb.innerHTML = "<strong>Belum tepat.</strong> Jika kamu melompati tahap pemahaman masalah, kode yang kamu tulis kemungkinan besar akan salah fungsi dan membuang waktu.";
+                cycle.classList.add('hidden');
+            }
+        }
+
+        function toggleModuleDetails(id) {
+            playSound('click');
+            const body = document.getElementById(`module-body-${id}`);
+            const icon = document.querySelector(`.module-icon-${id}`);
+            
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                icon.className = "fa-solid fa-chevron-up text-ueu-blue text-xs module-icon-" + id;
+            } else {
+                body.classList.add('hidden');
+                icon.className = "fa-solid fa-chevron-down text-slate-400 text-xs module-icon-" + id;
+            }
+        }
+
+        function submitReflection() {
+            const input = document.getElementById('studentReflection').value.trim();
+            if (input.length < 5) {
+                playSound('error');
+                alert("Silakan tuliskan refleksi singkatmu (minimal 5 karakter) sebelum melanjutkan.");
+                return;
+            }
+
+            playSound('success');
+            document.getElementById('reflectionTextDisplay').innerText = `"${input}"`;
+            document.getElementById('reflection-output').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('reflection-output').classList.remove('opacity-0');
+            }, 50);
+
+            document.getElementById('btnSubmitReflection').classList.add('hidden');
+        }
+
+        function launchJourney() {
+            playSound('success');
+            
+            // Launch particle confetti
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            setTimeout(() => {
+                alert("🎉 Selamat! Kamu telah menyelesaikan Modul Orientasi Berpikir Komputasional CSD231.\n\nSelamat datang di perkuliahan Algoritma dan Pemrograman - Universitas Esa Unggul!");
+            }, 400);
+        }
+
+        // Initialize default view on window load
+        window.onload = function() {
+            renderNoodleSteps();
+            updateProgressUI();
+
+            // Auto-unlock Web Audio context on first user touch/click
+            const enableAudioOnInteraction = () => {
+                initAudioContext();
+                window.removeEventListener('click', enableAudioOnInteraction);
+                window.removeEventListener('keydown', enableAudioOnInteraction);
+                window.removeEventListener('touchstart', enableAudioOnInteraction);
+            };
+            window.addEventListener('click', enableAudioOnInteraction);
+            window.addEventListener('keydown', enableAudioOnInteraction);
+            window.addEventListener('touchstart', enableAudioOnInteraction);
+        };
+    </script>
+</body>
+</html>
